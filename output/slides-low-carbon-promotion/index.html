@@ -1,0 +1,528 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>低碳農業推廣的機會與困境｜讀書會</title>
+<style>
+  :root{
+    --forest:#0f1a11; --forest2:#1b2a1c; --moss:#2f4630; --sage:#a9c49b;
+    --cream:#f4f1e8; --cream2:#e9e4d6; --ink:#1d2a1f; --muted:#5d6b5f; --pale:#d9e2d3;
+    --dilemma:#c0705e; --dilemma-bg:#f6e3dd;
+    --opp:#8a7cc2;     --opp-bg:#ebe7f6;
+    --strat:#5a9a6b;   --strat-bg:#e1efe3;
+    --font:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#070b08;overflow:hidden;font-family:var(--font);color:var(--ink)}
+  #viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #stage{width:1600px;height:900px;position:relative;transform-origin:center center;flex:none}
+  .slide{position:absolute;inset:0;display:none;overflow:hidden;
+    background:radial-gradient(120% 120% at 0% 0%,var(--forest2) 0%,var(--forest) 60%,#0a120b 100%)}
+  .slide.active{display:block}
+
+  /* ---------- fern background (底圖0) ---------- */
+  .fern{position:absolute;inset:0;background:url("../../assets/template/底圖0.png") center/cover no-repeat}
+  .fern.dim::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,14,9,.85),rgba(8,14,9,.35) 50%,rgba(8,14,9,.85))}
+  .fern.blur{filter:blur(3px) saturate(.8) brightness(.6);transform:scale(1.04)}
+
+  /* ---------- decorative fill (底圖3/4/5, CSS-only post-processing) ---------- */
+  .deco{position:absolute;pointer-events:none;background-repeat:no-repeat;
+    filter:saturate(.45) hue-rotate(35deg) brightness(.98) contrast(.9);opacity:.2;mix-blend-mode:multiply}
+  .deco.corner{right:0;bottom:0;width:480px;height:680px;background-image:url("../../assets/template/底圖5.png");background-size:contain;background-position:right bottom}
+  .deco.side{right:-30px;bottom:0;width:440px;height:622px;background-image:url("../../assets/template/底圖4.png");background-size:contain;background-position:left bottom;transform:scaleX(-1);
+    -webkit-mask-image:linear-gradient(90deg,#000 40%,transparent);mask-image:linear-gradient(90deg,#000 40%,transparent)}
+  .deco.top{left:0;right:0;top:-10px;height:420px;background-image:url("../../assets/template/底圖3.png");background-size:640px auto;background-position:right top;
+    -webkit-mask-image:linear-gradient(180deg,#000 30%,transparent);mask-image:linear-gradient(180deg,#000 30%,transparent)}
+  /* on dark pages: lighter blend instead of multiply */
+  .deco.ondark{mix-blend-mode:screen;opacity:.14;filter:saturate(.35) hue-rotate(40deg) brightness(.9)}
+
+  /* ---------- cat avatar: circular, trimmed white margin ---------- */
+  .avatar{border-radius:50%;overflow:hidden;background:#fff;flex:none;box-shadow:0 0 0 4px var(--sage),0 10px 26px rgba(0,0,0,.35)}
+  .avatar img{width:100%;height:100%;object-fit:cover;display:block;object-position:50% 50%}
+  /* 依實測內容範圍：圍巾貓內容寬 85%、蜜蜂貓 78%；放大倍率取「去掉白邊但不切到主體」的上限 */
+  .avatar.c1 img{transform:scale(1.16)}
+  .avatar.c2 img{transform:scale(1.22)}
+
+  /* ---------- content card ---------- */
+  .card{position:absolute;left:70px;right:70px;top:60px;bottom:70px;background:var(--cream);border-radius:28px;
+    box-shadow:0 20px 60px rgba(0,0,0,.45);overflow:hidden;padding:54px 70px 0 70px}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:14px;background:var(--sage)}
+  .card.dilemma::before{background:var(--dilemma)} .card.opp::before{background:var(--opp)} .card.strat::before{background:var(--strat)}
+  .tags{display:flex;gap:12px;margin-bottom:14px}
+  .tag{font-size:20px;font-weight:700;padding:5px 16px;border-radius:999px;letter-spacing:.04em}
+  .tag.block.dilemma{background:var(--dilemma);color:#fff} .tag.block.opp{background:var(--opp);color:#fff} .tag.block.strat{background:var(--strat);color:#fff}
+  .tag.who{background:var(--cream2);color:var(--ink)}
+  h1{font-size:54px;line-height:1.2;font-weight:800;color:var(--ink);letter-spacing:.01em}
+  .lead{font-size:28px;color:var(--muted);margin-top:14px;line-height:1.5}
+  ul.points{list-style:none;margin-top:40px;display:flex;flex-direction:column;gap:30px;max-width:1080px}
+  ul.points li{font-size:31px;line-height:1.5;padding-left:40px;position:relative}
+  ul.points li::before{content:"";position:absolute;left:4px;top:.55em;width:16px;height:16px;border-radius:50%;background:var(--sage)}
+  .dilemma ul.points li::before{background:var(--dilemma)} .opp ul.points li::before{background:var(--opp)} .strat ul.points li::before{background:var(--strat)}
+  b.n{font-weight:800;color:#8a5a12;background:linear-gradient(transparent 62%,rgba(216,180,92,.45) 62%);padding:0 2px;white-space:nowrap}
+  .src{position:absolute;left:70px;bottom:92px;font-size:20px;color:var(--muted);display:flex;gap:10px;align-items:center}
+  .src::before{content:"來源";font-size:16px;font-weight:700;color:#fff;background:var(--moss);padding:3px 10px;border-radius:6px}
+  .foot{position:absolute;left:0;right:0;bottom:0;background:var(--cream2);padding:16px 70px 18px;font-size:18px;line-height:1.55;color:#3f4b41;min-height:70px}
+  .foot strong{color:var(--ink)}
+  .notice{display:inline-block;margin-bottom:12px;font-size:21px;font-weight:700;color:#5b4a14;background:#f3e3b0;border:2px dashed #c9a640;border-radius:10px;padding:6px 16px}
+  .card .avatar.corner-cat{position:absolute;right:80px;top:56px;width:150px;height:150px}
+
+  /* ---------- dark pages (導覽、總覽、參考文獻) ---------- */
+  .dark{position:absolute;left:110px;right:110px;top:80px;bottom:80px;color:var(--cream)}
+  .dark h1{color:var(--cream)}
+  .dark .lead{color:var(--pale)}
+  .dark .tag.who{background:rgba(169,196,155,.2);color:var(--sage)}
+  .dark .src{position:static;margin-top:26px;color:var(--pale)}
+  .dark .src::before{background:var(--sage);color:var(--forest)}
+  .dark .note{position:absolute;left:0;bottom:0;font-size:18px;color:#aebcaa;line-height:1.55;border-top:1px solid rgba(169,196,155,.3);padding-top:12px;right:0}
+  .dark b.n{color:#f0cf7c;background:linear-gradient(transparent 62%,rgba(216,180,92,.25) 62%)}
+
+  /* ---------- bars ---------- */
+  .bars{margin-top:34px;display:flex;flex-direction:column;gap:16px;max-width:1000px}
+  .bar{display:grid;grid-template-columns:260px 1fr 110px;align-items:center;gap:18px;font-size:26px}
+  .bar .track{height:34px;background:var(--cream2);border-radius:8px;overflow:hidden}
+  .bar .fill{height:100%;background:var(--moss);border-radius:8px}
+  .bar .v{font-weight:800;color:#8a5a12}
+  .dark .bar .track{background:rgba(244,241,232,.12)}
+  .dark .bar .fill{background:var(--sage)}
+  .dark .bar .v{color:#f0cf7c}
+
+  /* ---------- matrix ---------- */
+  .matrix{display:grid;grid-template-columns:150px repeat(3,1fr);gap:12px;margin-top:30px;font-size:25px}
+  .matrix .h{font-weight:800;color:#fff;border-radius:10px;padding:12px 14px;text-align:center}
+  .matrix .rh{font-weight:800;background:rgba(169,196,155,.22);color:var(--cream);border-radius:10px;display:flex;align-items:center;justify-content:center}
+  .matrix .c{border-radius:10px;padding:18px 18px;line-height:1.4;color:var(--cream);border:1px solid}
+  .matrix .c.d{background:rgba(192,112,94,.18);border-color:rgba(192,112,94,.55)}
+  .matrix .c.o{background:rgba(138,124,194,.18);border-color:rgba(138,124,194,.55)}
+  .matrix .c.s{background:rgba(90,154,107,.2);border-color:rgba(90,154,107,.6)}
+
+  /* ---------- discussion: cat + speech bubble ---------- */
+  .glass{position:absolute;background:rgba(10,18,11,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(169,196,155,.35);border-radius:28px;color:var(--cream)}
+  .talk{display:flex;gap:34px;align-items:flex-start}
+  .talk .avatar{width:170px;height:170px;margin-top:6px}
+  .say{position:relative;flex:1;background:var(--cream);color:var(--ink);border-radius:26px;padding:26px 34px 28px;box-shadow:0 14px 36px rgba(0,0,0,.35)}
+  .say::before{content:"";position:absolute;left:-26px;top:62px;border-style:solid;border-width:14px 28px 14px 0;border-color:transparent var(--cream) transparent transparent}
+  .say .topic{font-size:44px;font-weight:800;line-height:1.25}
+  .say .q{font-size:27px;font-weight:700;margin-top:14px;display:flex;gap:14px;align-items:baseline;line-height:1.45}
+  .say .q span{flex:none;background:var(--moss);color:#fff;border-radius:8px;padding:0 10px;font-size:21px}
+  .disc-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:30px}
+  .disc-card{background:rgba(244,241,232,.1);border:1px solid rgba(169,196,155,.35);color:var(--cream);border-radius:20px;padding:22px 28px;font-size:23px;line-height:1.55}
+  .disc-card h3{font-size:24px;margin-bottom:8px;color:var(--sage)}
+  .disc-card ul{padding-left:1.1em} .disc-card li{margin-bottom:6px}
+  .disc-card b.n{color:#f0cf7c;background:none}
+  .gnote{margin-top:18px;font-size:19px;color:#c7d2c3}
+
+  /* ---------- references ---------- */
+  .refs{margin-top:30px;font-size:21px;line-height:1.55;display:flex;flex-direction:column;gap:16px;color:var(--pale)}
+  .refs p{padding-left:2em;text-indent:-2em}
+  .refs i{color:var(--cream)}
+
+  /* ---------- page number ---------- */
+  #pager{position:fixed;right:22px;bottom:16px;font:600 15px var(--font);color:#cfd8cc;background:rgba(15,26,17,.7);padding:6px 12px;border-radius:8px;z-index:5;letter-spacing:.05em}
+  #hint{position:fixed;left:22px;bottom:16px;font:13px var(--font);color:#8fa08c;z-index:5}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+<!-- 01 封面：無貓咪，標題置於蕨類中央框 -->
+<section class="slide" data-n="1">
+  <div class="fern dim"></div>
+  <div class="glass" style="left:530px;top:96px;width:540px;height:708px;border-radius:30px;display:flex;flex-direction:column;justify-content:center;padding:0 54px;text-align:center">
+    <div style="font-size:22px;letter-spacing:.4em;color:var(--sage);font-weight:700">讀書會</div>
+    <h1 style="color:var(--cream);font-size:62px;margin-top:22px;line-height:1.25">低碳農業推廣的<br>機會與困境</h1>
+    <div style="width:80px;height:3px;background:var(--sage);margin:30px auto 26px"></div>
+    <p style="font-size:26px;color:var(--pale);line-height:1.6">農民、專案、擴散、制度四端</p>
+  </div>
+</section>
+
+<!-- 02 導覽（深色、無米色卡） -->
+<section class="slide" data-n="2">
+  <div class="deco side ondark"></div>
+  <div class="dark">
+    <div style="display:flex;gap:28px;align-items:center">
+      <div class="avatar c1" style="width:120px;height:120px"><img src="../../assets/icons/1.jpg" alt="圍巾貓"></div>
+      <div>
+        <div class="tags" style="margin-bottom:8px"><span class="tag who">導覽</span></div>
+        <h1>卡住的，往往不是技術</h1>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:22px">在碳農業文獻中，最常被點名的障礙多半和技術本身無關。</p>
+    <div class="bars">
+      <div class="bar"><span>缺乏 MRV 與認證</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="v">16 篇</span></div>
+      <div class="bar"><span>成本高</span><div class="track"><div class="fill" style="width:87.5%"></div></div><span class="v">14 篇</span></div>
+      <div class="bar"><span>永久性</span><div class="track"><div class="fill" style="width:75%"></div></div><span class="v">12 篇</span></div>
+      <div class="bar"><span>知識不足</span><div class="track"><div class="fill" style="width:62.5%"></div></div><span class="v">10 篇</span></div>
+    </div>
+    <p class="lead" style="margin-top:28px;font-size:26px">今天依序看四端（農民、專案、擴散、制度）的<b style="color:var(--cream)">困境 → 機會 → 策略</b>，機會與策略板塊結尾各有一題討論。</p>
+    <div class="src">全球｜Raina2024（33 篇提及障礙的文獻）</div>
+    <div class="note">計次為「被提到的次數」，不代表影響大小。「卡住的不是技術」是本簡報的歸納，不是單一論文的結論。</div>
+  </div>
+</section>
+
+<!-- 03 總覽（深色、無米色卡） -->
+<section class="slide" data-n="3">
+  <div class="dark">
+    <div class="tags"><span class="tag who">總覽</span></div>
+    <h1>四端 × 三步</h1>
+    <div class="matrix">
+      <div></div>
+      <div class="h" style="background:var(--dilemma)">困境</div>
+      <div class="h" style="background:var(--opp)">機會</div>
+      <div class="h" style="background:var(--strat)">策略</div>
+      <div class="rh">農民</div><div class="c d">怕風險</div><div class="c o">調適準備度</div><div class="c s">合約設計</div>
+      <div class="rh">專案</div><div class="c d">錢不夠分</div><div class="c o">規模經濟</div><div class="c s">價格與分潤</div>
+      <div class="rh">擴散</div><div class="c d">傳不開</div><div class="c o">看得見的才傳得開</div><div class="c s">推廣佈局</div>
+      <div class="rh">制度</div><div class="c d">量不準、信不過</div><div class="c o">制度正在成形</div><div class="c s">標準化 MRV 與基準值</div>
+    </div>
+    <div class="note">討論題 A 在機會板塊結尾，討論題 B 在策略板塊結尾。</div>
+  </div>
+</section>
+
+<!-- 04 困境 農民 -->
+<section class="slide" data-n="4">
+  <div class="card dilemma">
+    <div class="deco corner"></div>
+    <div class="tags"><span class="tag block dilemma">困境</span><span class="tag who">農民端</span></div>
+    <h1>怕風險</h1>
+    <p class="lead">付款規則愈嚴，農民愈不想加入。</p>
+    <ul class="points">
+      <li>最低腐植質增量每提高 0.1%，獎金要多付 <b class="n">€323.76/ha</b> 才留得住農民</li>
+      <li>加入「可能要退錢」的回收機制，獎金要多付 <b class="n">€18.10/ha</b></li>
+      <li>僅 <b class="n">37%</b> 知道自家土壤碳含量，難以判斷自己能否達標</li>
+    </ul>
+    <div class="src">德國｜Block2024（N=150，離散選擇實驗）</div>
+    <div class="foot"><strong>腐植質計畫</strong>＝依土壤腐植質增量付錢的私部門固碳計畫。樣本農場比德國平均大，屬假設性情境。</div>
+  </div>
+</section>
+
+<!-- 05 困境 專案 -->
+<section class="slide" data-n="5">
+  <div class="card dilemma">
+    <div class="deco side"></div>
+    <div class="tags"><span class="tag block dilemma">困境</span><span class="tag who">專案端</span></div>
+    <h1>錢不夠分</h1>
+    <p class="lead">交易成本吃掉碳收入，農民拿到的遠低於期待。</p>
+    <ul class="points">
+      <li>影響專案成敗最大的是年度固定成本（專案管理、監測），彈性 <b class="n">0.89–0.95</b></li>
+      <li><b class="n">20–40%</b> 的碳收入用於 NGO 行政與 MRV</li>
+      <li>農民要求約 <b class="n">$54</b>，實拿約 <b class="n">$8</b>（USD/ha/年）</li>
+    </ul>
+    <div class="src">印尼、澳洲｜Cacho2013（模擬）；烏干達｜Shin2026</div>
+    <div class="foot"><strong>交易成本</strong>＝把減碳成果變成可交易商品的成本；<strong>MRV</strong>＝量測、報告、查證。$54 為問卷估計值，與 $8 來自不同地區。</div>
+  </div>
+</section>
+
+<!-- 06 困境 擴散 -->
+<section class="slide" data-n="6">
+  <div class="card dilemma">
+    <div class="deco top"></div>
+    <div class="tags"><span class="tag block dilemma">困境</span><span class="tag who">擴散端</span></div>
+    <h1>傳不開</h1>
+    <p class="lead">不是每種做法都會在鄰居之間傳開。</p>
+    <ul class="points">
+      <li>覆蓋作物：鄰近採用比例對自己採用<b>沒有顯著影響</b></li>
+      <li><b class="n">47%</b> 的覆蓋作物採用者用不到 3 年（保育耕作只有 <b class="n">9%</b>）</li>
+      <li>真正有用的是組織網絡：每增加 1 單位，採用機率 <b class="n">+0.20</b></li>
+    </ul>
+    <div class="src">美國南達科他州｜Kolady2021（N=435）</div>
+    <div class="foot"><strong>同儕效應</strong>＝鄰居採用會提高自己採用的機率；<strong>覆蓋作物</strong>＝主作物之間種植、用來保護土壤的作物。「做法太新」是作者推測，未經檢定。</div>
+  </div>
+</section>
+
+<!-- 07 困境 制度 -->
+<section class="slide" data-n="7">
+  <div class="card dilemma">
+    <div class="deco corner"></div>
+    <div class="tags"><span class="tag block dilemma">困境</span><span class="tag who">制度端</span></div>
+    <h1>量不準、信不過</h1>
+    <p class="lead">碳量得不準、存不久、說不清，市場就難以信任。</p>
+    <ul class="points">
+      <li>文獻最常提的障礙：缺乏 MRV <b class="n">16 篇</b>、永久性 <b class="n">12 篇</b>、額外性 <b class="n">8 篇</b></li>
+      <li>土壤腐植質量測誤差約 <b class="n">0.1–0.2%</b></li>
+      <li>前車之鑑：芝加哥氣候交易所（CCX）因供給過剩、碳價下跌，<b class="n">7 年</b>內停止運作</li>
+    </ul>
+    <div class="src">全球｜Raina2024；德國｜Block2024</div>
+    <div class="foot"><strong>永久性</strong>＝碳要長期存著，不因收穫或火災回到大氣；<strong>額外性</strong>＝沒有這個專案就不會發生的減碳。</div>
+  </div>
+</section>
+
+<!-- 08 機會 農民 -->
+<section class="slide" data-n="8">
+  <div class="card opp">
+    <div class="deco corner"></div>
+    <div class="tags"><span class="tag block opp">機會</span><span class="tag who">農民端</span></div>
+    <h1>調適準備度</h1>
+    <p class="lead">已經在做類似事情、或吃過氣候苦頭的農民，最願意加入。</p>
+    <ul class="points">
+      <li>已有農林複合經驗：參與機率 <b class="n">+22%</b></li>
+      <li>經歷過嚴重水災：參與機率 <b class="n">+14%</b></li>
+      <li>性別、年齡、教育、收入等人口特徵<b>都不顯著</b></li>
+    </ul>
+    <div class="src">烏干達｜Shin2026（n=303，陳述性偏好）</div>
+    <div class="foot"><strong>農林複合</strong>＝同一塊地上結合樹木與作物或牲畜。水災的效果只在部分模型顯著。</div>
+  </div>
+</section>
+
+<!-- 09 機會 專案 -->
+<section class="slide" data-n="9">
+  <div class="card opp">
+    <div class="tags"><span class="tag block opp">機會</span><span class="tag who">專案端</span></div>
+    <h1>規模經濟</h1>
+    <p class="lead">碳價提高，專案門檻就降低，結果也更穩定。</p>
+    <div class="bars">
+      <div class="bar"><span>碳價 20 USD</span><div class="track"><div class="fill" style="width:100%;background:var(--opp)"></div></div><span class="v">442 ha</span></div>
+      <div class="bar"><span>碳價 30 USD</span><div class="track"><div class="fill" style="width:49.5%;background:var(--opp)"></div></div><span class="v">219 ha</span></div>
+      <div class="bar"><span>碳價 50 USD</span><div class="track"><div class="fill" style="width:25.1%;background:var(--opp)"></div></div><span class="v">111 ha</span></div>
+    </div>
+    <p class="lead" style="margin-top:22px;font-size:25px">最小可行面積；變異係數 CV：<b class="n">0.69</b> → <b class="n">0.35</b> → <b class="n">0.36</b></p>
+    <div class="src">印尼｜Cacho2013（模擬 10,000 次，購買型合約）</div>
+    <div class="foot">碳價單位為 USD/t CO₂e；<strong>CV</strong>＝變異係數，愈小代表結果愈穩定。示範性模擬，假設農戶同質。</div>
+  </div>
+</section>
+
+<!-- 10 機會 擴散 -->
+<section class="slide" data-n="10">
+  <div class="card opp">
+    <div class="deco side"></div>
+    <div class="tags"><span class="tag block opp">機會</span><span class="tag who">擴散端</span></div>
+    <h1>看得見的才傳得開</h1>
+    <p class="lead">肉眼看得見的技術，會在鄰里間擴散。</p>
+    <ul class="points">
+      <li>節水灌溉：1 km 內每多 1 位採用者，自己採用的機率 <b class="n">+0.26</b> 個百分點，2–5 km 已不顯著</li>
+      <li>沒有同儕效應的話，每年約少 <b class="n">10%</b> 的安裝（<b class="n">1,000–1,600</b> 件）</li>
+      <li>低碳做法的同儕效應較小：保育耕作 <b class="n">+0.003</b>（每 1 個百分點的鄰近採用比例）</li>
+    </ul>
+    <div class="src">美國堪薩斯州｜Sampson2019（類比證據）；美國南達科他州｜Kolady2021</div>
+    <div class="foot">前兩點是<strong>節水技術</strong>，不是低碳做法；兩個數字單位不同，不能直接比大小。</div>
+  </div>
+</section>
+
+<!-- 11 機會 制度 -->
+<section class="slide" data-n="11">
+  <div class="card opp">
+    <div class="deco top"></div>
+    <div class="tags"><span class="tag block opp">機會</span><span class="tag who">制度端</span></div>
+    <h1>制度正在成形</h1>
+    <p class="lead">各國正在為碳農業建立遊戲規則。</p>
+    <ul class="points">
+      <li>歐盟碳移除認證框架（CRCF）：2030 年目標移除 <b class="n">−310 Mt CO₂e</b></li>
+      <li>美國 Growing Climate Solutions Act（<b class="n">2022</b>）：授權 USDA 認證第三方查驗機構</li>
+      <li>澳洲 ERF 改名為 ACCU Scheme（<b class="n">2023</b>），並規劃設立碳交易所</li>
+      <li>遙測等新工具可能簡化 MRV（目前只被提及，尚無效果證據）</li>
+    </ul>
+    <div class="src">歐盟、美國、澳洲｜Raina2024</div>
+    <div class="foot">政策剛上路，尚無成效評估。</div>
+  </div>
+</section>
+
+<!-- 12 討論題 A（機會篇）：貓咪＋對話框 -->
+<section class="slide" data-n="12">
+  <div class="fern blur"></div>
+  <div class="glass" style="left:70px;top:60px;right:70px;bottom:70px;padding:44px 60px">
+    <div class="tags"><span class="tag block opp">機會篇</span><span class="tag who" style="background:rgba(169,196,155,.2);color:var(--sage)">討論題 A</span></div>
+    <div class="talk" style="margin-top:10px">
+      <div class="avatar c2"><img src="../../assets/icons/2.jpg" alt="蜜蜂貓"></div>
+      <div class="say">
+        <div class="topic">同儕效應是可靠的槓桿嗎？</div>
+        <div class="q"><span>Q1</span>差異來自空間尺度、技術能見度，還是做法成熟度？</div>
+        <div class="q"><span>Q2</span>四個機會中，哪一個最容易被放大？</div>
+      </div>
+    </div>
+    <div class="disc-grid">
+      <div class="disc-card"><h3>堪薩斯州・節水灌溉</h3><ul>
+        <li>1 km 內 <b class="n">+0.26</b> 個百分點，效果明顯（Sampson2019）</li></ul></div>
+      <div class="disc-card"><h3>南達科他州・保育農業</h3><ul>
+        <li>保育耕作 <b class="n">+0.003</b>，覆蓋作物不顯著（Kolady2021）</li></ul></div>
+    </div>
+    <p class="gnote">註：兩個數字單位不同，不能直接比大小。</p>
+  </div>
+</section>
+
+<!-- 13 策略 農民 -->
+<section class="slide" data-n="13">
+  <div class="card strat">
+    <div class="deco corner"></div>
+    <div class="notice">以下策略皆為文獻建議，尚無成效評估</div>
+    <div class="tags"><span class="tag block strat">策略</span><span class="tag who">農民端</span></div>
+    <h1>合約設計</h1>
+    <p class="lead">讓農民少承擔風險，又能確認減碳成果。</p>
+    <ul class="points">
+      <li><b>混合式付款</b>：先預付、再依成果追加（例：肯亞 TIST 每棵樹預付 <b class="n">0.018 USD</b>）</li>
+      <li><b>碳權租賃</b>：農民保有彈性、退出時不需訴訟追款，但碳價低時所需規模最多是買斷的 <b class="n">2 倍</b></li>
+    </ul>
+    <div class="src">全球｜Raina2024；印尼、澳洲｜Cacho2013</div>
+    <div class="foot"><strong>成果導向</strong>＝依實測減碳量付錢；<strong>行動導向</strong>＝依做了哪些措施付錢；<strong>混合式</strong>＝兩者結合。當時市場上尚無實際的碳租賃合約。</div>
+  </div>
+</section>
+
+<!-- 14 策略 專案 -->
+<section class="slide" data-n="14">
+  <div class="card strat">
+    <div class="deco side"></div>
+    <div class="tags"><span class="tag block strat">策略</span><span class="tag who">專案端</span></div>
+    <h1>價格與分潤</h1>
+    <p class="lead">比起把價格拉高，讓收入可以預期更重要。</p>
+    <ul class="points">
+      <li><b>價格下限</b>：澳洲以反向拍賣簽約、政府保證收購 ACCU</li>
+      <li><b>收入可預期</b>：最低保證給付、共同效益溢價、信用發行更透明</li>
+      <li><b>匯集小農</b>：透過合作社或集體行動分攤成本</li>
+    </ul>
+    <div class="src">澳洲｜Raina2024；烏干達｜Shin2026；印尼｜Cacho2013</div>
+    <div class="foot"><strong>ACCU</strong>＝澳洲碳信用單位；<strong>反向拍賣</strong>＝賣方競標出價。合作社會員資格也可能排除非會員。</div>
+  </div>
+</section>
+
+<!-- 15 策略 擴散 -->
+<section class="slide" data-n="15">
+  <div class="card strat">
+    <div class="deco top"></div>
+    <div class="tags"><span class="tag block strat">策略</span><span class="tag who">擴散端</span></div>
+    <h1>推廣佈局</h1>
+    <p class="lead">依做法挑選推廣管道。</p>
+    <ul class="points">
+      <li>看得見的技術：把補貼與推廣放在農戶網絡的中心（類比證據）</li>
+      <li>保育耕作、輪作：在示範農場辦田間日</li>
+      <li>覆蓋作物：透過推廣組織改變認知，並持續成本分攤補貼</li>
+      <li>小農也會看鄰居：觀察鄰居成功能提高參與意願（質性證據）</li>
+    </ul>
+    <div class="src">美國堪薩斯州｜Sampson2019；美國南達科他州｜Kolady2021；烏干達｜Shin2026</div>
+    <div class="foot">以上皆為文獻建議，尚無成效評估。</div>
+  </div>
+</section>
+
+<!-- 16 策略 制度 -->
+<section class="slide" data-n="16">
+  <div class="card strat">
+    <div class="deco corner"></div>
+    <div class="tags"><span class="tag block strat">策略</span><span class="tag who">制度端</span></div>
+    <h1>標準化 MRV 與基準值</h1>
+    <p class="lead">讓碳量得準、比得公平。</p>
+    <ul class="points">
+      <li>標準化 MRV、第三方稽核、農民自報資料</li>
+      <li>依做法選量測方式：土壤碳用直接量測，糞肥管理可用模型</li>
+      <li>以田區近三年平均作為基準值：獎金可少付 <b class="n">€9.93/ha</b>；改用區域平均則要多付 <b class="n">€18.21/ha</b></li>
+    </ul>
+    <div class="src">全球｜Raina2024；德國｜Block2024</div>
+    <div class="foot"><strong>基準值</strong>＝計算增量的起點。德國情境中土壤採樣免費，實際上要收費。</div>
+  </div>
+</section>
+
+<!-- 17 討論題 B（策略篇）：貓咪＋對話框 -->
+<section class="slide" data-n="17">
+  <div class="fern blur"></div>
+  <div class="glass" style="left:70px;top:60px;right:70px;bottom:70px;padding:44px 60px">
+    <div class="tags"><span class="tag block strat">策略篇</span><span class="tag who" style="background:rgba(169,196,155,.2);color:var(--sage)">討論題 B</span></div>
+    <div class="talk" style="margin-top:10px">
+      <div class="avatar c2"><img src="../../assets/icons/2.jpg" alt="蜜蜂貓"></div>
+      <div class="say">
+        <div class="topic">合約該怎麼設計？</div>
+        <div class="q"><span>Q1</span>碳權該賣斷還是出租？</div>
+        <div class="q"><span>Q2</span>按成果付費值得嗎？混合式付款能化解這個兩難嗎？</div>
+      </div>
+    </div>
+    <div class="disc-grid">
+      <div class="disc-card"><h3>長期承諾</h3><ul>
+        <li>農民偏好較長的累積期，每延長 1 年獎金可少付 <b class="n">€7.39/ha</b>（Block2024）</li>
+        <li>成果導向能確保減碳可信度（Raina2024）</li></ul></div>
+      <div class="disc-card"><h3>保留彈性</h3><ul>
+        <li>租賃型降低違約風險，但碳價低時所需規模可達 <b class="n">2 倍</b>（Cacho2013）</li>
+        <li>門檻與回收機制讓農民卻步（Block2024）</li></ul></div>
+    </div>
+    <p class="gnote">註：Block2024 問的是「達成門檻的時間」，Cacho2013 問的是「碳權歸屬的時間」，兩者不完全相同。</p>
+  </div>
+</section>
+
+<!-- 18 風險提醒 -->
+<section class="slide" data-n="18">
+  <div class="card">
+    <div class="deco corner"></div>
+    <div class="avatar c2 corner-cat"><img src="../../assets/icons/2.jpg" alt="蜜蜂貓"></div>
+    <div class="tags"><span class="tag who">風險提醒</span></div>
+    <h1>兩個要小心的地方</h1>
+    <ul class="points" style="max-width:1080px">
+      <li><b>推廣成功 ≠ 環境成功</b>：節水灌溉的推估顯示，同儕效應帶動的採用原本可省水 <b class="n">0.10–0.31</b> 百萬英畝·呎，但每英畝多用 <b class="n">2.5%</b> 水的反彈效應，可能反而多用 <b class="n">0.09</b> 百萬英畝·呎</li>
+      <li><b>「$54」不宜當定價依據</b>：不同起始出價組的答案顯著不同（<b class="n">χ²=27.62，p&lt;0.01</b>）</li>
+    </ul>
+    <div class="src">美國堪薩斯州｜Sampson2019（類比，證據有限）；烏干達｜Shin2026</div>
+    <div class="foot"><strong>反彈效應</strong>＝效率提高後使用量反而增加；<strong>錨定偏誤</strong>＝回答受到第一個看到的數字影響。</div>
+  </div>
+</section>
+
+<!-- 19 綜合討論：兩隻貓＋對話框 -->
+<section class="slide" data-n="19">
+  <div class="fern dim"></div>
+  <div class="glass" style="left:70px;top:60px;right:70px;bottom:70px;padding:44px 60px">
+    <div class="tags"><span class="tag who" style="background:rgba(169,196,155,.2);color:var(--sage)">綜合討論</span></div>
+    <div class="talk" style="margin-top:10px">
+      <div style="display:flex;flex-direction:column;gap:14px;flex:none">
+        <div class="avatar c1" style="width:130px;height:130px"><img src="../../assets/icons/1.jpg" alt="圍巾貓"></div>
+        <div class="avatar c2" style="width:130px;height:130px"><img src="../../assets/icons/2.jpg" alt="蜜蜂貓"></div>
+      </div>
+      <div class="say">
+        <div class="topic">可以搬到台灣嗎？</div>
+        <div class="q"><span>Q1</span>台灣的農場規模與結構，比較接近哪一國的情境？</div>
+        <div class="q"><span>Q2</span>哪一個困境在台灣可能最嚴重？哪一個策略最容易移植？</div>
+        <div class="q"><span>Q3</span>要回答這些問題，我們還需要補哪些文獻？</div>
+      </div>
+    </div>
+    <div class="disc-grid" style="grid-template-columns:repeat(4,1fr);margin-top:26px">
+      <div class="disc-card"><h3>德國</h3>樣本平均耕地<br><b class="n">180.95 ha</b></div>
+      <div class="disc-card"><h3>美國南達科他州</h3>樣本平均<br><b class="n">1,170 英畝</b></div>
+      <div class="disc-card"><h3>烏干達</h3>小農平均約<br><b class="n">1 ha</b></div>
+      <div class="disc-card"><h3>合理價格</h3>取決於農戶的生計資本，不是固定門檻（Shin2026）</div>
+    </div>
+    <p class="gnote">註：本次 6 篇文獻皆無台灣資料。1 英畝 ≈ 0.4 公頃（換算）。</p>
+  </div>
+</section>
+
+<!-- 20 參考文獻（深色、無圓角米色卡） -->
+<section class="slide" data-n="20">
+  <div class="deco top ondark"></div>
+  <div class="dark">
+    <h1 style="font-size:46px">參考文獻</h1>
+    <div class="refs">
+      <p>Block, J. B., Danne, M., &amp; Mußhoff, O. (2024). Farmers' willingness to participate in a carbon sequestration program – A discrete choice experiment. <i>Environmental Management</i>, <i>74</i>, 332–349. https://doi.org/10.1007/s00267-024-01963-9</p>
+      <p>Cacho, O. J., Lipper, L., &amp; Moss, J. (2013). Transaction costs of carbon offset projects: A comparative study. <i>Ecological Economics</i>, <i>88</i>, 232–243. https://doi.org/10.1016/j.ecolecon.2012.12.008</p>
+      <p>Kolady, D., Zhang, W., Wang, T., &amp; Ulrich-Schad, J. (2021). Spatially mediated peer effects in the adoption of conservation agriculture practices. <i>Journal of Agricultural and Applied Economics</i>, <i>53</i>(1), 1–20. https://doi.org/10.1017/aae.2020.24</p>
+      <p>Raina, N., Zavalloni, M., &amp; Viaggi, D. (2024). Incentive mechanisms of carbon farming contracts: A systematic mapping study. <i>Journal of Environmental Management</i>, <i>352</i>, Article 120126. https://doi.org/10.1016/j.jenvman.2024.120126</p>
+      <p>Sampson, G. S., &amp; Perry, E. D. (2019). Peer effects in the diffusion of water-saving agricultural technologies. <i>Agricultural Economics</i>, <i>50</i>(6), 693–706. https://doi.org/10.1111/agec.12518</p>
+      <p>Shin, S., Okello, O., Otim, J., Lehmann, J., Fiorella, K., Waldman, K., &amp; Liao, C. (2026). Carbon finance as climate adaptation depends on smallholder livelihood contexts in Uganda. <i>Communications Sustainability</i>, <i>1</i>, Article 145. https://doi.org/10.1038/s44458-026-00151-6</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<div id="pager"></div>
+<div id="hint">← → 翻頁</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var stage = document.getElementById('stage');
+  var pager = document.getElementById('pager');
+  var i = 0;
+  function fit(){
+    var s = Math.min(window.innerWidth/1600, window.innerHeight/900);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+  function show(n){
+    i = Math.max(0, Math.min(slides.length-1, n));
+    slides.forEach(function(el, k){ el.classList.toggle('active', k === i); });
+    pager.textContent = (i+1) + ' / ' + slides.length;
+    if (location.hash !== '#' + (i+1)) history.replaceState(null, '', '#' + (i+1));
+  }
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); show(i+1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(i-1); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length-1);
+  });
+  window.addEventListener('resize', fit);
+  fit();
+  var start = parseInt((location.hash || '').replace('#',''), 10);
+  show(isNaN(start) ? 0 : start-1);
+})();
+</script>
+</body>
+</html>
